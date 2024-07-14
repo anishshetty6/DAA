@@ -1,0 +1,44 @@
+vector<int> ans;
+void tsp(int n, vector<pair<int, int>> adj[], vector<int> vis, int cur, int st, int cost, vector<int> tour){
+    if(accumulate(all(vis), 0) == n){
+        bool ok = 0;
+        for(auto i : adj[cur])  if(i.first == st){
+            ok = 1;
+            cost += i.second;
+        }        
+        if(!ok) return;
+        if(cost < dist){
+            dist = cost;
+            ans = tour;
+            ans.push_back(st);
+        }
+        return;
+    }
+    vis[cur] = 1;
+    for(auto i : adj[cur]){
+        if(vis[i.first])    continue;
+        cost += i.second;
+        tour.push_back(i.first);
+        tsp(n, adj, vis, i.first, st, cost, tour);
+        cost -= i.second;
+        tour.pop_back();
+    }
+    vis[cur] = 0;
+}
+int main(){
+    fastio;
+    int n = 4;
+    vector<pair<int, int>> adj[n+1];
+    adj[1].push_back({2,10});adj[1].push_back({4,20});adj[1].push_back({3,15});
+    adj[2].push_back({1,10});adj[2].push_back({4,25});adj[2].push_back({3,35});
+    adj[3].push_back({1,15});adj[3].push_back({4,30});adj[3].push_back({2,35});
+    adj[4].push_back({1,20});adj[4].push_back({2,25});adj[4].push_back({3,30});
+    // for tsp, graph should be connected
+    
+    vector<int> vis(n+1, 0);
+    vis[0] = 1;
+    tsp(n, adj, vis, 1, 1, 0, {1});
+    cout << dist << "\ntour : ";
+    for(auto i : ans)   cout << i << " ";
+    return 0;
+}
